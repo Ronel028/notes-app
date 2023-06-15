@@ -98,11 +98,11 @@ const ProfileMenu = () => {
 
 export default function Navigation() {
   return (
-    <Navbar className="mx-auto p-2 border-r-0 shadow-md lg:pl-6">
+    <Navbar className="mx-auto p-2 border-r-0 shadow-md lg:pl-6 mb-5">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
         <Typography
           as="a"
-          href="#"
+          href="/"
           className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
         >
           KeepNotes
