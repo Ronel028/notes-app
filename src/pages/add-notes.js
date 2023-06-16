@@ -7,14 +7,10 @@ import {
   Typography,
   Textarea,
 } from "@material-tailwind/react";
-import { Editable, useEditor } from "@wysimark/react";
 import Navigation from "../components/Navigation";
+import MarkdownEditor from "@/components/QuillEditor";
 
 export default function AddNotes() {
-  const editor = useEditor({
-    initialMarkdown: "",
-  });
-
   return (
     <>
       <Head>
@@ -31,7 +27,7 @@ export default function AddNotes() {
           <form className="w-full flex flex-col gap-3">
             <div className="w-full flex flex-col gap-3">
               <Input label="Notes Title" />
-              <Editable editor={editor} />
+              <MarkdownEditor />
             </div>
             <div className="flex justify-end items-center">
               <Button className=" bg-indigo-500 hover:shadow-indigo-300">
