@@ -25,8 +25,9 @@ export default function AddNotes() {
             <Typography variant="h5">Add new notes</Typography>
           </div>
           <form className="w-full flex flex-col gap-3">
-            <div className="w-full flex flex-col gap-3">
+            <div className="w-full flex flex-col gap-6">
               <Input label="Notes Title" />
+              <Input label="Notes Description" />
               <MarkdownEditor />
             </div>
             <div className="flex justify-end items-center">

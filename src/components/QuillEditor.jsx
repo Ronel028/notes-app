@@ -1,15 +1,38 @@
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import "react-quill/dist/quill.bubble.css";
 
 const ReactQuill = dynamic(import("react-quill"), { ssr: false });
 
 const MarkdownEditor = () => {
+  var toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    [{ direction: "rtl" }], // text direction
+
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+
+  const modules = {
+    toolbar: toolbarOptions,
+  };
+
   return (
     <ReactQuill
       theme="snow"
-      className="text-blue-gray-700 border-blue-gray-200 min-h-[200px]"
+      className="text-blue-gray-700 text-sm border-blue-gray-200 "
       placeholder="Content"
-      style={{ height: "200px" }}
+      modules={modules}
     />
   );
 };
