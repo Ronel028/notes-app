@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import {
   Card,
   Input,
-  Checkbox,
   Button,
   Typography,
   Spinner,
@@ -21,6 +21,7 @@ const Signup = () => {
     password: "",
   });
   const [displayRes, setDisplayRes] = useState(false);
+  const router = useRouter();
 
   // get user input value and save to userInput state
   const getUserInput = (e) => {
@@ -34,6 +35,7 @@ const Signup = () => {
   const saveUser = async (e) => {
     e.preventDefault();
     try {
+      setDisplayRes(true);
       const save = await axios.post(
         "http://localhost:8000/api/insert-user",
         userInput,
@@ -43,8 +45,13 @@ const Signup = () => {
           },
         }
       );
+      setDisplayRes(false);
       successMessage(save.data.msg);
+      setTimeout(() => {
+        router.push("/signin");
+      }, 2000);
     } catch (error) {
+      setDisplayRes(false);
       errorMessage(error.response.data.msg);
     }
   };
@@ -90,9 +97,10 @@ const Signup = () => {
             type="submit"
             className="mt-6 text-xs bg-indigo-500 hover:shadow-indigo-300 flex items-center justify-center gap-3"
             fullWidth
+            disabled={displayRes}
           >
             Create account
-            <Spinner className="h-4 w-4" />
+            {displayRes ? <Spinner className="h-4 w-4" /> : ""}
           </Button>
           <Typography
             color="gray"
