@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import {
   Card,
@@ -7,7 +8,11 @@ import {
   Checkbox,
   Button,
   Typography,
+  Spinner,
 } from "@material-tailwind/react";
+
+const errorMessage = (msg) => toast.error(msg);
+const successMessage = (msg) => toast.success(msg);
 
 const Signup = () => {
   const [userInput, setUserInput] = useState({
@@ -15,6 +20,7 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [displayRes, setDisplayRes] = useState(false);
 
   // get user input value and save to userInput state
   const getUserInput = (e) => {
@@ -27,21 +33,31 @@ const Signup = () => {
   // sumbit userInput to server
   const saveUser = async (e) => {
     e.preventDefault();
-    const save = await axios.post(
-      "http://localhost:8000/api/insert-user",
-      userInput,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log(save);
+    try {
+      const save = await axios.post(
+        "http://localhost:8000/api/insert-user",
+        userInput,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      successMessage(save.data.msg);
+    } catch (error) {
+      errorMessage(error.response.data.msg);
+    }
   };
 
   return (
     <div className="w-full h-auto min-h-screen p-4 flex items-center justify-center">
-      <Card shadow={true} className="p-5 w-full sm:w-96 flex justify-center">
+      {/* toast message */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      <Card
+        shadow={true}
+        className="p-5 w-full sm:w-[500px] flex justify-center"
+      >
         <Typography variant="h5" color="blue-gray">
           Creating an Account
         </Typography>
@@ -72,10 +88,11 @@ const Signup = () => {
           </div>
           <Button
             type="submit"
-            className="mt-6 text-xs bg-indigo-500 hover:shadow-indigo-300"
+            className="mt-6 text-xs bg-indigo-500 hover:shadow-indigo-300 flex items-center justify-center gap-3"
             fullWidth
           >
             Create account
+            <Spinner className="h-4 w-4" />
           </Button>
           <Typography
             color="gray"
