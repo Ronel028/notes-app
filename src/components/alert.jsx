@@ -1,12 +1,11 @@
-import { Alert, Typography } from "@material-tailwind/react";
-import { InformationCircleIcon } from "@heroicons/react/24/solid";
+import { Alert } from "@material-tailwind/react";
 
 const AlertMsg = (props) => {
   return (
     <Alert
-      color="red"
-      icon={<InformationCircleIcon strokeWidth={2} className="h-6 w-6" />}
+      icon={props.open.icon}
       open={props.open.open}
+      className={`bg-[${props.open.bgColor}]/10 text-[${props.open.textColor}] border-l-4 border-[${props.open.borderColor}] rounded-none font-medium`}
     >
       {props.open.msg}
     </Alert>

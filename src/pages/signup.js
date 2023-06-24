@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import {
   Card,
@@ -10,10 +9,11 @@ import {
   Typography,
   Spinner,
 } from "@material-tailwind/react";
+import {
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/solid";
 import AlertMsg from "@/components/alert";
-
-const errorMessage = (msg) => toast.error(msg);
-const successMessage = (msg) => toast.success(msg);
 
 const Signup = () => {
   const [userInput, setUserInput] = useState({
@@ -25,8 +25,25 @@ const Signup = () => {
   const [open, setOpen] = useState({
     open: false,
     msg: "",
+    textColor: "",
+    borderColor: "",
+    bgColor: "",
+    icon: null,
   });
   const router = useRouter();
+
+  // function for add value in alert
+  const alertValue = (isOpen, msg, textColor, borderColor, bgColor, icon) => {
+    setOpen({
+      ...open,
+      open: isOpen,
+      msg: msg,
+      textColor: textColor,
+      borderColor: borderColor,
+      bgColor: bgColor,
+      icon: icon,
+    });
+  };
 
   // get user input value and save to userInput state
   const getUserInput = (e) => {
@@ -51,32 +68,35 @@ const Signup = () => {
         }
       );
       setDisplayRes(false);
-      successMessage(save.data.msg);
+      alertValue(
+        true,
+        save.data.msg,
+        "#2ec946",
+        "#2ec946",
+        "#2ec946",
+        <CheckCircleIcon className="mt-px h-6 w-6" />
+      );
       setUserInput({
         ...userInput,
         username: "",
         email: "",
         password: "",
       });
-      // setTimeout(() => {
-      //   router.push("/signin");
-      // }, 2000);
     } catch (error) {
       setDisplayRes(false);
-      errorMessage(error.response.data.msg);
-      setOpen({
-        ...open,
-        open: true,
-        msg: error.response.data.msg,
-      });
+      alertValue(
+        true,
+        error.response.data.msg,
+        "#ef4444",
+        "#dc2626",
+        "#f87171",
+        <ExclamationTriangleIcon className="mt-px h-6 w-6" />
+      );
     }
   };
 
   return (
     <div className="w-full h-auto min-h-screen p-4 flex items-center justify-center">
-      {/* toast message */}
-      <Toaster position="top-right" reverseOrder={false} />
-
       <Card
         shadow={true}
         className="p-5 w-full sm:w-[550px] flex justify-center"
