@@ -10,6 +10,7 @@ import {
   Typography,
   Spinner,
 } from "@material-tailwind/react";
+import AlertMsg from "@/components/alert";
 
 const errorMessage = (msg) => toast.error(msg);
 const successMessage = (msg) => toast.success(msg);
@@ -21,6 +22,10 @@ const Signup = () => {
     password: "",
   });
   const [displayRes, setDisplayRes] = useState(false);
+  const [open, setOpen] = useState({
+    open: false,
+    msg: "",
+  });
   const router = useRouter();
 
   // get user input value and save to userInput state
@@ -37,7 +42,7 @@ const Signup = () => {
     try {
       setDisplayRes(true);
       const save = await axios.post(
-        "http://localhost:8000/api/insert-user",
+        "http://localhost:8080/api/insert-user",
         userInput,
         {
           headers: {
@@ -47,12 +52,23 @@ const Signup = () => {
       );
       setDisplayRes(false);
       successMessage(save.data.msg);
-      setTimeout(() => {
-        router.push("/signin");
-      }, 2000);
+      setUserInput({
+        ...userInput,
+        username: "",
+        email: "",
+        password: "",
+      });
+      // setTimeout(() => {
+      //   router.push("/signin");
+      // }, 2000);
     } catch (error) {
       setDisplayRes(false);
       errorMessage(error.response.data.msg);
+      setOpen({
+        ...open,
+        open: true,
+        msg: error.response.data.msg,
+      });
     }
   };
 
@@ -63,26 +79,33 @@ const Signup = () => {
 
       <Card
         shadow={true}
-        className="p-5 w-full sm:w-[500px] flex justify-center"
+        className="p-5 w-full sm:w-[550px] flex justify-center"
       >
         <Typography variant="h5" color="blue-gray">
           Creating an Account
         </Typography>
-        <Typography color="gray" className="mt-1 font-normal text-xs">
+        <Typography color="gray" className="mt-1 mb-8 font-normal text-xs">
           Enter your details to register.
         </Typography>
-        <form className="mt-8 mb-2 max-w-screen-lg w-full" onSubmit={saveUser}>
+
+        {/* alert */}
+        <AlertMsg open={open} setOpen={setOpen} />
+        {/* alert */}
+
+        <form className="mt-4 mb-2 max-w-screen-lg w-full" onSubmit={saveUser}>
           <div className="mb-4 flex flex-col gap-6">
             <Input
               size="lg"
               label="Username"
               name="username"
+              value={userInput.username}
               onChange={getUserInput}
             />
             <Input
               size="lg"
               label="Email"
               name="email"
+              value={userInput.email}
               onChange={getUserInput}
             />
             <Input
@@ -90,6 +113,7 @@ const Signup = () => {
               size="lg"
               label="Password"
               name="password"
+              value={userInput.password}
               onChange={getUserInput}
             />
           </div>
