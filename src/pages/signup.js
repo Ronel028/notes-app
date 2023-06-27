@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
 import {
@@ -9,11 +8,8 @@ import {
   Typography,
   Spinner,
 } from "@material-tailwind/react";
-import {
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
-import AlertMsg from "@/components/alert";
+import AlertErrorMsg from "@/components/ErrorAlert";
+import AlertSuccessMsg from "@/components/SuccessAlert";
 
 const Signup = () => {
   const [userInput, setUserInput] = useState({
@@ -22,28 +18,14 @@ const Signup = () => {
     password: "",
   });
   const [displayRes, setDisplayRes] = useState(false);
-  const [open, setOpen] = useState({
+  const [errorMsg, setErrorMsg] = useState({
     open: false,
     msg: "",
-    textColor: "",
-    borderColor: "",
-    bgColor: "",
-    icon: null,
   });
-  const router = useRouter();
-
-  // function for add value in alert
-  const alertValue = (isOpen, msg, textColor, borderColor, bgColor, icon) => {
-    setOpen({
-      ...open,
-      open: isOpen,
-      msg: msg,
-      textColor: textColor,
-      borderColor: borderColor,
-      bgColor: bgColor,
-      icon: icon,
-    });
-  };
+  const [successMsg, setSuccessMsg] = useState({
+    open: false,
+    msg: "",
+  });
 
   // get user input value and save to userInput state
   const getUserInput = (e) => {
@@ -68,14 +50,16 @@ const Signup = () => {
         }
       );
       setDisplayRes(false);
-      alertValue(
-        true,
-        save.data.msg,
-        "#2ec946",
-        "#2ec946",
-        "#2ec946",
-        <CheckCircleIcon className="mt-px h-6 w-6" />
-      );
+      setSuccessMsg({
+        ...successMsg,
+        open: true,
+        msg: save.data.msg,
+      });
+      setErrorMsg({
+        ...errorMsg,
+        open: false,
+        msg: "",
+      });
       setUserInput({
         ...userInput,
         username: "",
@@ -84,14 +68,16 @@ const Signup = () => {
       });
     } catch (error) {
       setDisplayRes(false);
-      alertValue(
-        true,
-        error.response.data.msg,
-        "#ef4444",
-        "#dc2626",
-        "#f87171",
-        <ExclamationTriangleIcon className="mt-px h-6 w-6" />
-      );
+      setErrorMsg({
+        ...errorMsg,
+        open: true,
+        msg: error.response.data.msg,
+      });
+      setSuccessMsg({
+        ...successMsg,
+        open: false,
+        msg: "",
+      });
     }
   };
 
@@ -109,7 +95,11 @@ const Signup = () => {
         </Typography>
 
         {/* alert */}
-        <AlertMsg open={open} setOpen={setOpen} />
+        <AlertErrorMsg errorMsg={errorMsg} setErrorMsg={setErrorMsg} />
+        <AlertSuccessMsg
+          successMsg={successMsg}
+          setSuccessMsg={setSuccessMsg}
+        />
         {/* alert */}
 
         <form className="mt-4 mb-2 max-w-screen-lg w-full" onSubmit={saveUser}>
