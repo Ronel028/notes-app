@@ -1,9 +1,34 @@
+import { useEffect } from "react";
 import Head from "next/head";
+import axios from "axios";
+import { useRouter } from "next/router";
 import EmptyState from "@/components/EmtyState";
 import NotesCard from "@/components/NotesCard";
 import MainLayout from "@/layout/MainLayout";
 
 export default function Home() {
+  const router = useRouter();
+
+  // check user if login
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const checkUserLogin = await axios.get(
+          "http://localhost:8080/api/verify-user-login",
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(checkUserLogin);
+      } catch (error) {
+        if (!error.response.data.login) {
+          router.push("/signin");
+        }
+      }
+    };
+    checkUser();
+  }, []);
+
   return (
     <>
       <Head>

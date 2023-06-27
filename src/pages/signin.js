@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import axios from "axios";
 import {
   Card,
@@ -21,7 +22,27 @@ const Signin = () => {
     msg: "",
   });
   const [displayRes, setDisplayRes] = useState(false);
+  const router = useRouter();
   // state
+
+  // check user if already login
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const checkUserLogin = await axios.get(
+          "http://localhost:8080/api/verify-user-login",
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(checkUserLogin);
+        if (checkUserLogin.data.login) {
+          router.push("/");
+        }
+      } catch (error) {}
+    };
+    checkUser();
+  }, []);
 
   // get user input
   const getUserInput = (e) => {
