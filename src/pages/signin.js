@@ -10,9 +10,10 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import AlertErrorMsg from "@/components/ErrorAlert";
+import checkUserLogin from "@/hooks/checkUserLogin";
 
 const Signin = () => {
-  // state
+  // hooks
   const [userData, setUserData] = useState({
     username: "",
     password: "",
@@ -23,26 +24,10 @@ const Signin = () => {
   });
   const [displayRes, setDisplayRes] = useState(false);
   const router = useRouter();
-  // state
-
-  // check user if already login
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const checkUserLogin = await axios.get(
-          "http://localhost:8080/api/verify-user-login",
-          {
-            withCredentials: true,
-          }
-        );
-        console.log(checkUserLogin);
-        if (checkUserLogin.data.login) {
-          router.push("/");
-        }
-      } catch (error) {}
-    };
-    checkUser();
-  }, []);
+  const [data, setData] = checkUserLogin(
+    "http://localhost:8080/api/verify-user-login"
+  );
+  // hooks
 
   // get user input
   const getUserInput = (e) => {
@@ -70,6 +55,11 @@ const Signin = () => {
       );
       console.log(signin);
       setDisplayRes(false);
+      setData({
+        ...data,
+        login: true,
+      });
+      router.push("/");
     } catch (error) {
       setDisplayRes(false);
       setErrorMsg({

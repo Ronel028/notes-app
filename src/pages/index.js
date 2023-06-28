@@ -5,29 +5,36 @@ import { useRouter } from "next/router";
 import EmptyState from "@/components/EmtyState";
 import NotesCard from "@/components/NotesCard";
 import MainLayout from "@/layout/MainLayout";
+import checkUserLogin from "@/hooks/checkUserLogin";
 
-export default function Home() {
+export default function Home(props) {
   const router = useRouter();
 
-  // check user if login
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const checkUserLogin = await axios.get(
-          "http://localhost:8080/api/verify-user-login",
-          {
-            withCredentials: true,
-          }
-        );
-        console.log(checkUserLogin);
-      } catch (error) {
-        if (!error.response.data.login) {
-          router.push("/signin");
-        }
-      }
-    };
-    checkUser();
-  }, []);
+  const [data, setData] = checkUserLogin(
+    "http://localhost:8080/api/verify-user-login"
+  );
+
+  console.log(data);
+
+  //check user if login
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     try {
+  //       const checkUserLogin = await axios.get(
+  //         "http://localhost:8080/api/verify-user-login",
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
+  //       if (!checkUserLogin.data.login) {
+  //         router.push("/signin");
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   checkUser();
+  // }, []);
 
   return (
     <>
