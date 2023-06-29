@@ -24,10 +24,23 @@ const Signin = () => {
   });
   const [displayRes, setDisplayRes] = useState(false);
   const router = useRouter();
-  const [data, setData] = checkUserLogin(
-    "http://localhost:8080/api/verify-user-login"
-  );
+  // const [data, setData] = checkUserLogin(
+  //   "http://localhost:8080/api/verify-user-login"
+  // );
   // hooks
+
+  // useEffect(() => {
+  //   const user = async () => {
+  //     const userInfo = await axios.get(
+  //       "http://localhost:8080/api/verify-user-login",
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
+  //     console.log(userInfo.data);
+  //   };
+  //   user();
+  // }, []);
 
   // get user input
   const getUserInput = (e) => {
@@ -55,10 +68,10 @@ const Signin = () => {
       );
       console.log(signin);
       setDisplayRes(false);
-      setData({
-        ...data,
-        login: true,
-      });
+      // setData({
+      //   ...data,
+      //   login: true,
+      // });
       router.push("/");
     } catch (error) {
       setDisplayRes(false);

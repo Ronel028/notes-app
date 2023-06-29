@@ -7,34 +7,28 @@ import NotesCard from "@/components/NotesCard";
 import MainLayout from "@/layout/MainLayout";
 import checkUserLogin from "@/hooks/checkUserLogin";
 
+// server side rendering
+export const getServerSideProps = async ({ req, res }) => {
+  const user = await axios("http://localhost:8080/api/verify-user-login", {
+    headers: req.headers,
+    withCredentials: true,
+  });
+
+  if (!user.data.login) {
+    return {
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: { user: user.data, header: req.headers } };
+};
+
 export default function Home(props) {
   const router = useRouter();
-
-  const [data, setData] = checkUserLogin(
-    "http://localhost:8080/api/verify-user-login"
-  );
-
-  console.log(data);
-
-  //check user if login
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     try {
-  //       const checkUserLogin = await axios.get(
-  //         "http://localhost:8080/api/verify-user-login",
-  //         {
-  //           withCredentials: true,
-  //         }
-  //       );
-  //       if (!checkUserLogin.data.login) {
-  //         router.push("/signin");
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   checkUser();
-  // }, []);
+  console.log(props.user);
 
   return (
     <>

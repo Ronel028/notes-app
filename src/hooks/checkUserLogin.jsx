@@ -7,28 +7,26 @@ const checkUserLogin = (url) => {
     login: false,
     user: "",
   });
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const user = async () => {
+      setLoading(true);
       const userInfo = await axios.get(url, {
         withCredentials: true,
       });
-      if (userInfo.data.login) {
-        setData({
-          ...data,
-          login: userInfo.data.login,
-          user: userInfo.data,
-        });
-        router.push("/");
-      } else {
-        router.push("/signin");
-      }
+      setData({
+        ...data,
+        login: userInfo.data.login,
+        user: userInfo.data,
+      });
+      setLoading(false);
     };
     user();
   }, []);
 
-  return [data, setData];
+  return [data, setData, loading];
 };
 
 export default checkUserLogin;
