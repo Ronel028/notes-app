@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -6,6 +6,8 @@ import EmptyState from "@/components/EmtyState";
 import NotesCard from "@/components/NotesCard";
 import MainLayout from "@/layout/MainLayout";
 import checkUserLogin from "@/hooks/checkUserLogin";
+
+const notify = (name) => toast.success("Welcome ", name);
 
 // server side rendering
 export const getServerSideProps = async ({ req, res }) => {
@@ -28,7 +30,6 @@ export const getServerSideProps = async ({ req, res }) => {
 
 export default function Home(props) {
   const router = useRouter();
-  console.log(props.user);
 
   return (
     <>
