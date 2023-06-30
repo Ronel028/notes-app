@@ -1,4 +1,6 @@
 import Head from "next/head";
+import { useState } from "react";
+import axios from "axios";
 import {
   Card,
   Input,
@@ -11,6 +13,55 @@ import Navigation from "../components/Navigation";
 import MarkdownEditor from "@/components/QuillEditor";
 
 export default function AddNotes() {
+  const [notesData, setNotesData] = useState({
+    notes_title: "",
+    notes_description: "",
+  });
+  const [markdownValue, setMarkdownValue] = useState("");
+
+  // get input value
+  const getInputValue = (e) => {
+    const { name, value } = e.target;
+    setNotesData({
+      ...notesData,
+      [name]: value,
+    });
+  };
+
+  // save notes to database
+  const saveNotes = async (e) => {
+    e.preventDefault();
+    console.log(notesData);
+    console.log(markdownValue);
+    try {
+      const addNotes = await axios.post(
+        "http://localhost:8080/api/add-notes",
+        {
+          notes_title: notesData.notes_title,
+          notes_description: notesData.notes_description,
+          notes_content: markdownValue,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(addNotes);
+      if (addNotes.status === 200) {
+        setNotesData({
+          ...notesData,
+          notes_title: "",
+          notes_description: "",
+        });
+        setMarkdownValue("");
+      }
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -24,14 +75,30 @@ export default function AddNotes() {
           <div className=" mb-5">
             <Typography variant="h5">Add new notes</Typography>
           </div>
-          <form className="w-full flex flex-col gap-3">
+          <form className="w-full flex flex-col gap-3" onSubmit={saveNotes}>
             <div className="w-full flex flex-col gap-6">
-              <Input label="Notes Title" />
-              <Input label="Notes Description" />
-              <MarkdownEditor />
+              <Input
+                label="Notes Title"
+                name="notes_title"
+                value={notesData.notes_title}
+                onChange={getInputValue}
+              />
+              <Input
+                label="Notes Description"
+                name="notes_description"
+                value={notesData.notes_description}
+                onChange={getInputValue}
+              />
+              <MarkdownEditor
+                markdownValue={markdownValue}
+                setMarkdownValue={setMarkdownValue}
+              />
             </div>
             <div className="flex justify-end items-center">
-              <Button className=" bg-indigo-500 hover:shadow-indigo-300">
+              <Button
+                type="submit"
+                className=" bg-indigo-500 hover:shadow-indigo-300"
+              >
                 Create notes
               </Button>
             </div>

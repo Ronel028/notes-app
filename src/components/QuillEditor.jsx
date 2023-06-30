@@ -4,7 +4,7 @@ import "react-quill/dist/quill.bubble.css";
 
 const ReactQuill = dynamic(import("react-quill"), { ssr: false });
 
-const MarkdownEditor = () => {
+const MarkdownEditor = (props) => {
   var toolbarOptions = [
     ["bold", "italic", "underline", "strike"], // toggled buttons
     ["blockquote", "code-block"],
@@ -33,6 +33,8 @@ const MarkdownEditor = () => {
       className="text-blue-gray-700 text-sm border-blue-gray-200 "
       placeholder="Content"
       modules={modules}
+      value={props.markdownValue}
+      onChange={props.setMarkdownValue}
     />
   );
 };
