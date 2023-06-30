@@ -31,6 +31,17 @@ export const getServerSideProps = async ({ req, res }) => {
 export default function Home(props) {
   const router = useRouter();
 
+  // fetching notes data
+  const getNotes = async () => {
+    const notes = await axios.get("http://localhost:8080/api/notes-list", {
+      withCredentials: true,
+    });
+    console.log(notes);
+  };
+  useEffect(() => {
+    getNotes();
+  }, []);
+
   return (
     <>
       <Head>

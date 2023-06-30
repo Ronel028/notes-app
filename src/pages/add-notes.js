@@ -11,13 +11,47 @@ import {
 } from "@material-tailwind/react";
 import Navigation from "../components/Navigation";
 import MarkdownEditor from "@/components/QuillEditor";
+import AlertErrorMsg from "@/components/ErrorAlert";
+import AlertSuccessMsg from "@/components/SuccessAlert";
+
+// server side rendering
+export const getServerSideProps = async ({ req, res }) => {
+  const user = await axios("http://localhost:8080/api/verify-user-login", {
+    headers: req.headers,
+    withCredentials: true,
+  });
+
+  if (!user.data.login) {
+    return {
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user: user.data,
+    },
+  };
+};
 
 export default function AddNotes() {
+  // hooks
   const [notesData, setNotesData] = useState({
     notes_title: "",
     notes_description: "",
   });
   const [markdownValue, setMarkdownValue] = useState("");
+  const [errorMsg, setErrorMsg] = useState({
+    open: false,
+    msg: "",
+  });
+  const [successMsg, setSuccessMsg] = useState({
+    open: false,
+    msg: "",
+  });
 
   // get input value
   const getInputValue = (e) => {
@@ -50,6 +84,16 @@ export default function AddNotes() {
       );
       console.log(addNotes);
       if (addNotes.status === 200) {
+        setSuccessMsg({
+          ...successMsg,
+          open: true,
+          msg: addNotes.data.msg,
+        });
+        setErrorMsg({
+          ...errorMsg,
+          open: false,
+          msg: "",
+        });
         setNotesData({
           ...notesData,
           notes_title: "",
@@ -59,6 +103,16 @@ export default function AddNotes() {
       }
     } catch (error) {
       console.log(error.response);
+      setErrorMsg({
+        ...errorMsg,
+        open: true,
+        msg: error.response.data.msg,
+      });
+      setSuccessMsg({
+        ...successMsg,
+        open: false,
+        msg: "",
+      });
     }
   };
 
@@ -75,7 +129,16 @@ export default function AddNotes() {
           <div className=" mb-5">
             <Typography variant="h5">Add new notes</Typography>
           </div>
-          <form className="w-full flex flex-col gap-3" onSubmit={saveNotes}>
+
+          {/* error messag */}
+          <AlertErrorMsg errorMsg={errorMsg} />
+          {/* success message */}
+          <AlertSuccessMsg successMsg={successMsg} />
+
+          <form
+            className="mt-4 w-full flex flex-col gap-3"
+            onSubmit={saveNotes}
+          >
             <div className="w-full flex flex-col gap-6">
               <Input
                 label="Notes Title"
