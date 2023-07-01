@@ -13,25 +13,27 @@ import AlertErrorMsg from "@/components/ErrorAlert";
 
 // server side rendering
 export const getServerSideProps = async ({ req, res }) => {
-  const user = await axios("http://localhost:8080/api/verify-user-login", {
-    headers: req.headers,
-    withCredentials: true,
-  });
-
-  if (user.data.login) {
+  try {
+    const user = await axios("http://localhost:8080/api/verify-user-login", {
+      headers: req.headers,
+      withCredentials: true,
+    });
+    if (user.data.login) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
     return {
-      redirect: {
-        destination: "/",
-        permanent: false,
+      props: {
+        user: user.data,
       },
     };
+  } catch (error) {
+    alert("Something's wrong with the server. Please try again later!");
   }
-
-  return {
-    props: {
-      user: user.data,
-    },
-  };
 };
 
 // signin components

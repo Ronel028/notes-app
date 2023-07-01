@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -16,25 +17,29 @@ import AlertSuccessMsg from "@/components/SuccessAlert";
 
 // server side rendering
 export const getServerSideProps = async ({ req, res }) => {
-  const user = await axios("http://localhost:8080/api/verify-user-login", {
-    headers: req.headers,
-    withCredentials: true,
-  });
+  try {
+    const user = await axios("http://localhost:8080/api/verify-user-login", {
+      headers: req.headers,
+      withCredentials: true,
+    });
 
-  if (!user.data.login) {
+    if (!user.data.login) {
+      return {
+        redirect: {
+          destination: "/signin",
+          permanent: false,
+        },
+      };
+    }
+
     return {
-      redirect: {
-        destination: "/signin",
-        permanent: false,
+      props: {
+        user: user.data,
       },
     };
+  } catch (error) {
+    alert("Something's wrong with the server. Please try again later!");
   }
-
-  return {
-    props: {
-      user: user.data,
-    },
-  };
 };
 
 export default function AddNotes() {
@@ -52,6 +57,7 @@ export default function AddNotes() {
     open: false,
     msg: "",
   });
+  const router = useRouter();
 
   // get input value
   const getInputValue = (e) => {
@@ -100,6 +106,8 @@ export default function AddNotes() {
           notes_description: "",
         });
         setMarkdownValue("");
+        router.push("/");
+        return;
       }
     } catch (error) {
       console.log(error.response);
