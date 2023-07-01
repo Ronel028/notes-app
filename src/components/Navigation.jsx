@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/router";
 import {
   Navbar,
-  MobileNav,
   Typography,
   Button,
   Menu,
@@ -10,23 +11,13 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  Card,
-  IconButton,
 } from "@material-tailwind/react";
 import {
-  CubeTransparentIcon,
-  UserCircleIcon,
-  CodeBracketSquareIcon,
-  Square3Stack3DIcon,
   ChevronDownIcon,
-  Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
   PowerIcon,
-  RocketLaunchIcon,
-  Bars2Icon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useGlobalContext } from "@/context/store";
 
 // profile menu component
 const profileMenuItems = [
@@ -36,7 +27,7 @@ const profileMenuItems = [
   },
 ];
 
-const ProfileMenu = () => {
+const ProfileMenu = (props) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -64,39 +55,47 @@ const ProfileMenu = () => {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
-          const isLastItem = key === profileMenuItems.length - 1;
-          return (
-            <MenuItem
-              key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : ""
-              }`}
+        <MenuItem className="hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10">
+          <Button
+            variant="text"
+            className="w-auto h-auto p-0 flex items-center gap-2 rounded hover:bg-transparent"
+            onClick={props.signout}
+          >
+            <PowerIcon className="h-4 w-4 text-red-500" />
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color="red"
             >
-              {React.createElement(icon, {
-                className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                strokeWidth: 2,
-              })}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
-              >
-                {label}
-              </Typography>
-            </MenuItem>
-          );
-        })}
+              Sign out
+            </Typography>
+          </Button>
+        </MenuItem>
       </MenuList>
     </Menu>
   );
 };
 
 export default function Navigation() {
+  const router = useRouter();
+  const userInfo = useGlobalContext();
+
+  const signout = async () => {
+    console.log("sign out");
+    try {
+      const signoutUser = await axios.get("http://localhost:8080/api/signout", {
+        withCredentials: true,
+      });
+      console.log(signoutUser);
+      if (signoutUser.data.logout) {
+        router.push("/signin");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Navbar className="mx-auto p-2 border-r-0 shadow-md lg:pl-6 mb-5">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
@@ -107,7 +106,8 @@ export default function Navigation() {
           <Link href="/add-notes" className="text-blue-gray-900">
             <PlusCircleIcon className="h-6 w-6" />
           </Link>
-          <ProfileMenu />
+          <Typography>{`${userInfo.user}`}</Typography>
+          <ProfileMenu signout={signout} />
         </div>
       </div>
     </Navbar>

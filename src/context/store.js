@@ -1,12 +1,22 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 const GlobalContext = createContext({});
 
 export const GlobalContextProvider = ({ children }) => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState("");
+  const getUserLogin = async () => {
+    const user = await axios.get("http://localhost:8080/api/user-login", {
+      withCredentials: true,
+    });
+    setUser(user.data.username);
+  };
+  useEffect(() => {
+    getUserLogin();
+  }, []);
 
   return (
-    <GlobalContext.Provider value={{ isLogin, setIsLogin }}>
+    <GlobalContext.Provider value={{ user, setUser }}>
       {children}
     </GlobalContext.Provider>
   );

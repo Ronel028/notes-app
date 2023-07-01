@@ -13,7 +13,6 @@ import {
 import Navigation from "../components/Navigation";
 import MarkdownEditor from "@/components/QuillEditor";
 import AlertErrorMsg from "@/components/ErrorAlert";
-import AlertSuccessMsg from "@/components/SuccessAlert";
 
 // server side rendering
 export const getServerSideProps = async ({ req, res }) => {
@@ -53,10 +52,6 @@ export default function AddNotes() {
     open: false,
     msg: "",
   });
-  const [successMsg, setSuccessMsg] = useState({
-    open: false,
-    msg: "",
-  });
   const router = useRouter();
 
   // get input value
@@ -71,8 +66,6 @@ export default function AddNotes() {
   // save notes to database
   const saveNotes = async (e) => {
     e.preventDefault();
-    console.log(notesData);
-    console.log(markdownValue);
     try {
       const addNotes = await axios.post(
         "http://localhost:8080/api/add-notes",
@@ -88,13 +81,7 @@ export default function AddNotes() {
           withCredentials: true,
         }
       );
-      console.log(addNotes);
       if (addNotes.status === 200) {
-        setSuccessMsg({
-          ...successMsg,
-          open: true,
-          msg: addNotes.data.msg,
-        });
         setErrorMsg({
           ...errorMsg,
           open: false,
@@ -116,11 +103,6 @@ export default function AddNotes() {
         open: true,
         msg: error.response.data.msg,
       });
-      setSuccessMsg({
-        ...successMsg,
-        open: false,
-        msg: "",
-      });
     }
   };
 
@@ -140,8 +122,6 @@ export default function AddNotes() {
 
           {/* error messag */}
           <AlertErrorMsg errorMsg={errorMsg} />
-          {/* success message */}
-          <AlertSuccessMsg successMsg={successMsg} />
 
           <form
             className="mt-4 w-full flex flex-col gap-3"

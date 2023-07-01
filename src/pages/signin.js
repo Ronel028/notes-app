@@ -10,6 +10,7 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import AlertErrorMsg from "@/components/ErrorAlert";
+import { useGlobalContext } from "@/context/store";
 
 // server side rendering
 export const getServerSideProps = async ({ req, res }) => {
@@ -49,6 +50,7 @@ const Signin = () => {
   });
   const [displayRes, setDisplayRes] = useState(false);
   const router = useRouter();
+  const user = useGlobalContext();
 
   // get user input
   const getUserInput = (e) => {
@@ -76,6 +78,7 @@ const Signin = () => {
       );
       console.log(signin);
       setDisplayRes(false);
+      user.setUser(signin.data.user);
       router.push("/");
     } catch (error) {
       setDisplayRes(false);

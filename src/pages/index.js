@@ -51,8 +51,22 @@ export default function Home(props) {
   }, []);
 
   // delete notes
-  const deleteNotes = (id) => {
-    console.log(id);
+  const deleteNotes = async (id) => {
+    try {
+      const deleteNotes = await axios.delete(
+        `http://localhost:8080/api/delete-notes/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(deleteNotes.data.notes.length);
+      const notesList = deleteNotes.data.notes;
+      if (notesList.length <= 0) {
+        setNotesData([]);
+      } else {
+        setNotesData(deleteNotes.data.notes[0].Notes);
+      }
+    } catch (error) {}
   };
 
   return (
