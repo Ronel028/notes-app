@@ -59,7 +59,6 @@ export default function Home(props) {
           withCredentials: true,
         }
       );
-      console.log(deleteNotes.data.notes.length);
       const notesList = deleteNotes.data.notes;
       if (notesList.length <= 0) {
         setNotesData([]);

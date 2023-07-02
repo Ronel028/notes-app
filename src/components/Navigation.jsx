@@ -56,7 +56,7 @@ const ProfileMenu = (props) => {
       </MenuHandler>
       <MenuList className="p-1">
         <MenuItem className="hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10">
-          <Button
+          <div
             variant="text"
             className="w-auto h-auto p-0 flex items-center gap-2 rounded hover:bg-transparent"
             onClick={props.signout}
@@ -70,7 +70,7 @@ const ProfileMenu = (props) => {
             >
               Sign out
             </Typography>
-          </Button>
+          </div>
         </MenuItem>
       </MenuList>
     </Menu>
@@ -87,7 +87,6 @@ export default function Navigation() {
       const signoutUser = await axios.get("http://localhost:8080/api/signout", {
         withCredentials: true,
       });
-      console.log(signoutUser);
       if (signoutUser.data.logout) {
         router.push("/signin");
       }

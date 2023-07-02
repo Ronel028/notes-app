@@ -76,7 +76,6 @@ const Signin = () => {
           withCredentials: true,
         }
       );
-      console.log(signin);
       setDisplayRes(false);
       user.setUser(signin.data.user);
       router.push("/");

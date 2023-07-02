@@ -6,10 +6,12 @@ const GlobalContext = createContext({});
 export const GlobalContextProvider = ({ children }) => {
   const [user, setUser] = useState("");
   const getUserLogin = async () => {
-    const user = await axios.get("http://localhost:8080/api/user-login", {
-      withCredentials: true,
-    });
-    setUser(user.data.username);
+    try {
+      const user = await axios.get("http://localhost:8080/api/user-login", {
+        withCredentials: true,
+      });
+      setUser(user.data.username);
+    } catch (error) {}
   };
   useEffect(() => {
     getUserLogin();
